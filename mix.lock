@@ -1,0 +1,6 @@
+%{
+  "jason": {:hex, :jason, "1.4.1", "af1504e35f629ddcdd6addb3513c3853991f694921b1b9368b0bd32beb9f1b63", [:mix], [{:decimal, "~> 1.0 or ~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "fbb01ecdfd565b56261302f7e1fcc27c4fb8f32d56eab74db621fc154604a7a1"},
+  "monad": {:git, "https://github.com/he9lin/monad.git", "339d2e1ca5d94d4af1b44d1e94d1df70ea8f0f2d", [ref: "339d2e"]},
+  "typed_struct": {:hex, :typed_struct, "0.3.0", "939789e3c1dca39d7170c87f729127469d1315dcf99fee8e152bb774b17e7ff7", [:mix], [], "hexpm", "c50bd5c3a61fe4e198a8504f939be3d3c85903b382bde4865579bc23111d1b6d"},
+  "xio": {:git, "https://github.com/he9lin/xio.git", "1e21f72f68e021bcde624b328023eb1a25d2519f", [ref: "1e21f72"]},
+}
