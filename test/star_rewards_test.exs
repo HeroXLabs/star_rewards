@@ -3,17 +3,17 @@ defmodule StarRewardsTest do
 
   describe "Consumes stars with a single group" do
     test "when there are enough stars" do
-      stars_group = new_stars_group(1, 10)
-      stars_groupes = [stars_group]
+      block = new_block(1, 10)
+      blocks = [block]
 
-      assert StarRewards.consume_stars(stars_groupes, 5) ==
+      assert StarRewards.consume_stars(blocks, 5) ==
                {:ok,
                 %StarRewards.Transaction{
                   consumed: [
                     %StarRewards.Transaction.Consumed{
-                      stars_group_id: 1,
+                      block_id: 1,
                       amount_consumed: 5,
-                      stars_group: %{stars_group | amount: 5}
+                      block: %{block | amount: 5}
                     }
                   ],
                   amount: 5
@@ -21,30 +21,30 @@ defmodule StarRewardsTest do
     end
 
     test "returns error when there are not enough stars" do
-      stars_groupes = [new_stars_group(1, 10)]
-      assert StarRewards.consume_stars(stars_groupes, 15) == {:error, :not_enough_stars}
+      blocks = [new_block(1, 10)]
+      assert StarRewards.consume_stars(blocks, 15) == {:error, :not_enough_stars}
     end
   end
 
   describe "Consumes stars with multiple groups" do
     test "when there are enough stars" do
-      stars_group1 = new_stars_group(1, 10)
-      stars_group2 = new_stars_group(2, 10, 2)
-      stars_groupes = [stars_group1, stars_group2]
+      block1 = new_block(1, 10)
+      block2 = new_block(2, 10, 2)
+      blocks = [block1, block2]
 
-      assert StarRewards.consume_stars(stars_groupes, 15) ==
+      assert StarRewards.consume_stars(blocks, 15) ==
                {:ok,
                 %StarRewards.Transaction{
                   consumed: [
                     %StarRewards.Transaction.Consumed{
-                      stars_group_id: 1,
+                      block_id: 1,
                       amount_consumed: 10,
-                      stars_group: %{stars_group1 | amount: 0}
+                      block: %{block1 | amount: 0}
                     },
                     %StarRewards.Transaction.Consumed{
-                      stars_group_id: 2,
+                      block_id: 2,
                       amount_consumed: 5,
-                      stars_group: %{stars_group2 | amount: 5}
+                      block: %{block2 | amount: 5}
                     }
                   ],
                   amount: 15
@@ -52,23 +52,23 @@ defmodule StarRewardsTest do
     end
 
     test "when there are enough stars but always consume stars group expires first" do
-      stars_group1 = new_stars_group(1, 10)
-      stars_group2 = new_stars_group(2, 10, 2)
-      stars_groupes = [stars_group1, stars_group2]
+      block1 = new_block(1, 10)
+      block2 = new_block(2, 10, 2)
+      blocks = [block1, block2]
 
-      assert StarRewards.consume_stars(stars_groupes, 15) ==
+      assert StarRewards.consume_stars(blocks, 15) ==
                {:ok,
                 %StarRewards.Transaction{
                   consumed: [
                     %StarRewards.Transaction.Consumed{
-                      stars_group_id: 1,
+                      block_id: 1,
                       amount_consumed: 10,
-                      stars_group: %{stars_group1 | amount: 0}
+                      block: %{block1 | amount: 0}
                     },
                     %StarRewards.Transaction.Consumed{
-                      stars_group_id: 2,
+                      block_id: 2,
                       amount_consumed: 5,
-                      stars_group: %{stars_group2 | amount: 5}
+                      block: %{block2 | amount: 5}
                     }
                   ],
                   amount: 15
@@ -76,16 +76,16 @@ defmodule StarRewardsTest do
     end
 
     test "returns error when there are not enough stars" do
-      stars_group1 = new_stars_group(1, 10)
-      stars_group2 = new_stars_group(2, 10, 2)
-      stars_groupes = [stars_group1, stars_group2]
+      block1 = new_block(1, 10)
+      block2 = new_block(2, 10, 2)
+      blocks = [block1, block2]
 
-      assert StarRewards.consume_stars(stars_groupes, 25) == {:error, :not_enough_stars}
+      assert StarRewards.consume_stars(blocks, 25) == {:error, :not_enough_stars}
     end
   end
 
-  defp new_stars_group(id, amount, expire_days \\ 1) do
-    %StarRewards.StarsGroup{
+  defp new_block(id, amount, expire_days \\ 1) do
+    %StarRewards.Block{
       id: id,
       amount: amount,
       expires_at: later_time(expire_days)
