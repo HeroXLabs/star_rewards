@@ -3,20 +3,25 @@ defmodule StarRewards.BlockBuilder.Live do
   alias StarRewards.NewBlock
 
   typedstruct enforce: true do
-    field :id_generator, (() -> String.t())
+    field :random_id, any
     field :expire_method, {:month, non_neg_integer} | {:day, non_neg_integer}
   end
+
+  require ZIO
 
   def new_block(%__MODULE__{} = builder, amount, reference, timezone, %DateTime{} = utc_now) do
     date = date_on_timezone(utc_now, timezone)
     expire_date = find_expiration_date(date, builder.expire_method)
 
-    %NewBlock{
-      id: builder.id_generator.(),
-      amount: amount,
-      reference: reference,
-      expire_date: expire_date
-    }
+    ZIO.m do
+      id <- builder.random_id
+      return %NewBlock{
+        id: id,
+        amount: amount,
+        reference: reference,
+        expire_date: expire_date
+      }
+    end
   end
 
   defp find_expiration_date(date, {:month, expire_in_months}) do
@@ -50,7 +55,7 @@ defmodule StarRewards.BlockBuilder.Live do
     alias StarRewards.BlockBuilder.Live, as: Builder
 
     def new_block(builder, amount, reference, timezone, utc_now) do
-      Builder.new_block(builder, amount, reference, timezone, utc_now) |> ZIO.return()
+      Builder.new_block(builder, amount, reference, timezone, utc_now)
     end
   end
 end

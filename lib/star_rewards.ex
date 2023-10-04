@@ -2,6 +2,13 @@ defmodule StarRewards do
   alias __MODULE__.{StarReward, Block, Transaction, BlockBuilder, StarRewardBuilder}
   require ZIO
 
+  def find_star_reward(star_reward_id) do
+    ZIO.m do
+      repository <- ZIO.environment(:repository)
+      repository.find_star_reward(star_reward_id)
+    end
+  end
+
   def create_star_reward(reference, timezone) do
     ZIO.m do
       builder <- ZIO.environment(:star_reward_builder)
