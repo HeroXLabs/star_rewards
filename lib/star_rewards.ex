@@ -34,7 +34,11 @@ defmodule StarRewards do
   def consume(star_reward_id, count) do
     ZIO.m do
       repository <- ZIO.environment(:repository)
-      repository.create_transation(star_reward_id, count, &consume_stars/2)
+      clock <- ZIO.environment(:clock)
+
+      star_reward <- repository.find_star_reward(star_reward_id)
+      let date = clock.today(star_reward.timezone)
+      repository.create_transaction(star_reward_id, count, date, &consume_stars/2) |> ZIO.from_either()
     end
   end
 
