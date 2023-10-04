@@ -21,8 +21,9 @@ defmodule StarRewards.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:calendar, "~> 0.17.2"},
       {:typed_struct, "~> 0.3.0"},
-      {:xio, github: "he9lin/xio", ref: "1e21f72"}
+      {:xio, github: "he9lin/xio", ref: "ec40a79"}
     ]
   end
 end

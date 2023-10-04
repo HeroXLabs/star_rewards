@@ -88,11 +88,13 @@ defmodule StarRewardsTest do
     %StarRewards.Block{
       id: id,
       amount: amount,
-      expires_at: later_time(expire_days)
+      reference: "Purchase",
+      expire_date: later_time(expire_days),
+      created_at: DateTime.utc_now()
     }
   end
 
   defp later_time(n) do
-    DateTime.utc_now() |> DateTime.add(n, :day)
+    DateTime.utc_now() |> DateTime.add(n, :day) |> DateTime.to_date()
   end
 end

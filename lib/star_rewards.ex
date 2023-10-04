@@ -1,11 +1,40 @@
 defmodule StarRewards do
-  use TypedStruct
-  alias __MODULE__.{Block, Transaction}
+  alias __MODULE__.{StarReward, Block, Transaction, BlockBuilder, StarRewardBuilder}
+  require ZIO
 
-  typedstruct enforce: true do
-    field :id, term
-    field :owner_id, term
-    field :blocks, [Block.t()]
+  def create_star_reward(reference, timezone) do
+    ZIO.m do
+      builder <- ZIO.environment(:star_reward_builder)
+      repository <- ZIO.environment(:repository)
+
+      new_star_reward <- StarRewardBuilder.new_star_reward(builder, reference, timezone)
+      repository.create_star_reward(new_star_reward)
+    end
+  end
+
+  def add_stars(star_reward_id, count, reference, %DateTime{} = utc_now) do
+    ZIO.m do
+      block_builder <- ZIO.environment(:block_builder)
+      repository <- ZIO.environment(:repository)
+
+      star_reward <- repository.find_star_reward(star_reward_id)
+      new_block <- BlockBuilder.new_block(block_builder, count, reference, star_reward.timezone, utc_now)
+      _ <- repository.create_block(star_reward, new_block)
+      repository.find_star_reward(star_reward_id)
+    end
+  end
+
+  def consume(star_reward_id, count) do
+    ZIO.m do
+      repository <- ZIO.environment(:repository)
+      repository.create_transation(star_reward_id, count, &consume_stars/2)
+    end
+  end
+
+  @spec consume_stars(StarReward.t(), non_neg_integer()) ::
+          {:ok, Transaction.t()} | {:error, :not_enough_stars}
+  def consume_stars(%StarReward{blocks: blocks}, count) do
+    consume_stars(blocks, count)
   end
 
   @spec consume_stars([Block.t()], non_neg_integer()) ::
@@ -22,7 +51,7 @@ defmodule StarRewards do
     else
       ordered_blocks =
         blocks
-        |> Enum.sort_by(& &1.expires_at)
+        |> Enum.sort_by(& &1.expire_date, Date)
 
       {consumed, _} =
         Enum.reduce(ordered_blocks, {consumed, remaining_count}, fn block,
