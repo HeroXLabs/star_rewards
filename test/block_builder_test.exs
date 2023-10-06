@@ -1,6 +1,5 @@
 defmodule StarRewards.BlockBuilderTest do
   use ExUnit.Case
-  alias StarRewards.Block
   alias StarRewards.NewBlock
   alias StarRewards.BlockBuilder
 

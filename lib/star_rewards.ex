@@ -19,15 +19,13 @@ defmodule StarRewards do
     end
   end
 
-  def add_stars(star_reward_id, count, reference, %DateTime{} = utc_now) do
+  def add_stars(%StarReward{id: star_reward_id, timezone: timezone}, count, reference, %DateTime{} = utc_now) do
     ZIO.m do
       block_builder <- ZIO.environment(:block_builder)
       repository <- ZIO.environment(:repository)
-
-      star_reward <- repository.find_star_reward(star_reward_id)
-      new_block <- BlockBuilder.new_block(block_builder, count, reference, star_reward.timezone, utc_now)
-      _ <- repository.create_block(star_reward, new_block)
-      repository.find_star_reward(star_reward_id)
+      new_block <- BlockBuilder.new_block(block_builder, count, reference, timezone, utc_now)
+      _ <- repository.create_block(star_reward_id, new_block)
+      return :ok
     end
   end
 

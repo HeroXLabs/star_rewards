@@ -6,7 +6,7 @@ defmodule StarRewards.Repository do
 
   @callback create_star_reward(NewStarReward.t()) :: ZIO.zio(any, any, StarReward.t())
   @callback find_star_reward(star_reward_id) :: ZIO.zio(any, any, StarReward.t())
-  @callback create_block(StarReward.t(), NewBlock.t()) :: ZIO.zio(any, any, Block.t())
+  @callback create_block(star_reward_id, NewBlock.t()) :: ZIO.zio(any, any, Block.t())
 
   @callback create_transaction(star_reward_id, non_neg_integer, DateTime.t(), consume_fn) :: any
 end
