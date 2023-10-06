@@ -13,7 +13,7 @@ defmodule StarRewardsTest do
                     %StarRewards.Transaction.Consumed{
                       block_id: 1,
                       amount_consumed: 5,
-                      block: %{block | amount: 5}
+                      block: %{block | amount_left: 5}
                     }
                   ],
                   amount: 5
@@ -39,12 +39,12 @@ defmodule StarRewardsTest do
                     %StarRewards.Transaction.Consumed{
                       block_id: 1,
                       amount_consumed: 10,
-                      block: %{block1 | amount: 0}
+                      block: %{block1 | amount_left: 0}
                     },
                     %StarRewards.Transaction.Consumed{
                       block_id: 2,
                       amount_consumed: 5,
-                      block: %{block2 | amount: 5}
+                      block: %{block2 | amount_left: 5}
                     }
                   ],
                   amount: 15
@@ -63,12 +63,12 @@ defmodule StarRewardsTest do
                     %StarRewards.Transaction.Consumed{
                       block_id: 1,
                       amount_consumed: 10,
-                      block: %{block1 | amount: 0}
+                      block: %{block1 | amount_left: 0}
                     },
                     %StarRewards.Transaction.Consumed{
                       block_id: 2,
                       amount_consumed: 5,
-                      block: %{block2 | amount: 5}
+                      block: %{block2 | amount_left: 5}
                     }
                   ],
                   amount: 15
@@ -88,6 +88,7 @@ defmodule StarRewardsTest do
     %StarRewards.Block{
       id: id,
       amount: amount,
+      amount_left: amount,
       reference: "Purchase",
       expire_date: later_time(expire_days),
       created_at: DateTime.utc_now()

@@ -53,7 +53,7 @@ defmodule StarRewards do
     remaining_count = count
 
     total_stars =
-      blocks |> Enum.map(& &1.amount) |> Enum.sum()
+      blocks |> Enum.map(& &1.amount_left) |> Enum.sum()
 
     if total_stars < count do
       {:error, :not_enough_stars}
@@ -67,14 +67,14 @@ defmodule StarRewards do
                                                                            {consumed,
                                                                             remaining_count} ->
           if remaining_count > 0 do
-            if block.amount >= remaining_count do
+            if block.amount_left >= remaining_count do
               consumed =
                 consumed ++
                   [
                     %Transaction.Consumed{
                       block_id: block.id,
                       amount_consumed: remaining_count,
-                      block: %{block | amount: block.amount - remaining_count}
+                      block: %{block | amount_left: block.amount_left - remaining_count}
                     }
                   ]
 
@@ -84,12 +84,12 @@ defmodule StarRewards do
                 [
                   %Transaction.Consumed{
                     block_id: block.id,
-                    amount_consumed: block.amount,
-                    block: %{block | amount: 0}
+                    amount_consumed: block.amount_left,
+                    block: %{block | amount_left: 0}
                   }
                 ] ++ consumed
 
-              remaining_count = remaining_count - block.amount
+              remaining_count = remaining_count - block.amount_left
               {consumed, remaining_count}
             end
           else
