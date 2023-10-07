@@ -1,6 +1,20 @@
 defmodule StarRewards do
-  alias __MODULE__.{StarReward, Block, Transaction, BlockBuilder, StarRewardBuilder}
+  alias __MODULE__.{StarReward, Block, NewTransaction, BlockBuilder, StarRewardBuilder}
   require ZIO
+
+  def list_all_transactions(star_reward_id) do
+    ZIO.m do
+      repository <- ZIO.environment(:repository)
+      repository.list_all_transactions(star_reward_id)
+    end
+  end
+
+  def list_all_blocks(star_reward_id) do
+    ZIO.m do
+      repository <- ZIO.environment(:repository)
+      repository.list_all_blocks(star_reward_id)
+    end
+  end
 
   def find_star_reward(star_reward_id) do
     ZIO.m do
@@ -41,13 +55,13 @@ defmodule StarRewards do
   end
 
   @spec consume_stars(StarReward.t(), non_neg_integer()) ::
-          {:ok, Transaction.t()} | {:error, :not_enough_stars}
+          {:ok, NewTransaction.t()} | {:error, :not_enough_stars}
   def consume_stars(%StarReward{blocks: blocks}, count) do
     consume_stars(blocks, count)
   end
 
   @spec consume_stars([Block.t()], non_neg_integer()) ::
-          {:ok, Transaction.t()} | {:error, :not_enough_stars}
+          {:ok, NewTransaction.t()} | {:error, :not_enough_stars}
   def consume_stars(blocks, count) do
     consumed = []
     remaining_count = count
@@ -71,7 +85,7 @@ defmodule StarRewards do
               consumed =
                 consumed ++
                   [
-                    %Transaction.Consumed{
+                    %NewTransaction.Consumed{
                       block_id: block.id,
                       amount_consumed: remaining_count,
                       block: %{block | amount_left: block.amount_left - remaining_count}
@@ -82,7 +96,7 @@ defmodule StarRewards do
             else
               consumed =
                 [
-                  %Transaction.Consumed{
+                  %NewTransaction.Consumed{
                     block_id: block.id,
                     amount_consumed: block.amount_left,
                     block: %{block | amount_left: 0}
@@ -97,7 +111,7 @@ defmodule StarRewards do
           end
         end)
 
-      {:ok, %Transaction{consumed: consumed, amount: count}}
+      {:ok, %NewTransaction{consumed: consumed, amount: count}}
     end
   end
 end

@@ -8,9 +8,9 @@ defmodule StarRewardsTest do
 
       assert StarRewards.consume_stars(blocks, 5) ==
                {:ok,
-                %StarRewards.Transaction{
+                %StarRewards.NewTransaction{
                   consumed: [
-                    %StarRewards.Transaction.Consumed{
+                    %StarRewards.NewTransaction.Consumed{
                       block_id: 1,
                       amount_consumed: 5,
                       block: %{block | amount_left: 5}
@@ -34,14 +34,14 @@ defmodule StarRewardsTest do
 
       assert StarRewards.consume_stars(blocks, 15) ==
                {:ok,
-                %StarRewards.Transaction{
+                %StarRewards.NewTransaction{
                   consumed: [
-                    %StarRewards.Transaction.Consumed{
+                    %StarRewards.NewTransaction.Consumed{
                       block_id: 1,
                       amount_consumed: 10,
                       block: %{block1 | amount_left: 0}
                     },
-                    %StarRewards.Transaction.Consumed{
+                    %StarRewards.NewTransaction.Consumed{
                       block_id: 2,
                       amount_consumed: 5,
                       block: %{block2 | amount_left: 5}
@@ -58,14 +58,14 @@ defmodule StarRewardsTest do
 
       assert StarRewards.consume_stars(blocks, 15) ==
                {:ok,
-                %StarRewards.Transaction{
+                %StarRewards.NewTransaction{
                   consumed: [
-                    %StarRewards.Transaction.Consumed{
+                    %StarRewards.NewTransaction.Consumed{
                       block_id: 1,
                       amount_consumed: 10,
                       block: %{block1 | amount_left: 0}
                     },
-                    %StarRewards.Transaction.Consumed{
+                    %StarRewards.NewTransaction.Consumed{
                       block_id: 2,
                       amount_consumed: 5,
                       block: %{block2 | amount_left: 5}
