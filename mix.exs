@@ -23,7 +23,7 @@ defmodule StarRewards.MixProject do
     [
       {:calendar, "~> 0.17.2"},
       {:typed_struct, "~> 0.3.0"},
-      {:xio, github: "he9lin/xio", ref: "ec40a79"}
+      {:xio, github: "he9lin/xio", ref: "3b3fe44"}
     ]
   end
 end
